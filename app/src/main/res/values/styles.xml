@@ -5,4 +5,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="ExpandedHomeTitle" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="CollapsedHomeTitle" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#333333</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>
