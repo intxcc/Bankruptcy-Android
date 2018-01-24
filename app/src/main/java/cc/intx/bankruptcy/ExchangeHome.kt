@@ -1,13 +1,17 @@
 package cc.intx.bankruptcy
 
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import kotlinx.android.synthetic.main.activity_home_screen.*
+import android.support.v7.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_exchange_home.*
 
 
-class HomeScreen : AppCompatActivity() {
+class ExchangeHome : AppCompatActivity() {
+
+    lateinit var mAdapter: RecyclerView.Adapter<*>
+    lateinit var mLayoutManager: RecyclerView.LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -18,12 +22,15 @@ class HomeScreen : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home_screen)
+        setContentView(R.layout.activity_exchange_home)
 
-        exchangeButton.setOnClickListener {
-            val intent = Intent(this, ExchangeHome::class.java)
-            startActivity(intent)
-        }
+        mLayoutManager = LinearLayoutManager(this);
+        exSearchResultsRecyclerView.layoutManager = mLayoutManager
+
+        val dataset: Array<String> = arrayOf("January", "February", "March")
+
+        mAdapter = ExchangeSearchAdapter(dataset);
+        exSearchResultsRecyclerView.setAdapter(mAdapter);
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
