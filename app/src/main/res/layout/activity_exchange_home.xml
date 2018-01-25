@@ -38,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <Button
+                android:id="@+id/btnTest"
                 android:text="eth"
                 android:backgroundTint="#fff"
                 android:layout_width="60dp"
@@ -93,19 +94,19 @@
     </LinearLayout>
 
     <SearchView
+        android:id="@+id/exchangeSearchField"
         android:background="#fff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        android:elevation="1dp"/>
+        android:layout_marginBottom="10dp"
+        android:elevation="2dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/exSearchResultsRecyclerView"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
+        android:paddingTop="2dp"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
