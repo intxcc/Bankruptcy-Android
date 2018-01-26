@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.util.DisplayMetrics
 
 
@@ -27,12 +28,16 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
     private var markedForInsertionCount = 0
 
     private var context: Context
+    private var selectCryptoCurrency: (c: CryptoCurrencyInfo?) -> Unit
+
+    private var selection: CryptoCurrencyInfo? = null
 
     class ViewHolder(// each data item is just a string in this case
             var mFrameLayout: FrameLayout) : RecyclerView.ViewHolder(mFrameLayout)
 
-    constructor(myDataset: ArrayList<CryptoCurrencyInfo>, context: Context) {
+    constructor(myDataset: ArrayList<CryptoCurrencyInfo>, selectCryptoCurrency: (c: CryptoCurrencyInfo?) -> Unit, context: Context) {
         mDataset = myDataset
+        this.selectCryptoCurrency = selectCryptoCurrency
         this.context = context
     }
 
@@ -49,10 +54,28 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
         val icon = item.icon
         if (icon != null) holder?.mFrameLayout?.findViewById<ImageView>(R.id.bg_image)?.setBackgroundResource(icon)
 
+        if (selection != null && holder?.itemView != null && item == selection) {
+            holder.itemView.elevation = 0f
+        } else if (holder?.itemView != null) {
+            holder.itemView.elevation = 2f
+        }
+
         if (holder?.itemView != null) {
+            holder.itemView.setOnClickListener {
+                if (selection == item) {
+                    selectCryptoCurrency(null)
+                    selection = null
+                    notifyDataSetChanged()
+                } else {
+                    selectCryptoCurrency(item)
+                    selection = item
+                    notifyDataSetChanged()
+                }
+            }
+
             if (markedForInsertion.contains(item)) {
                 markedForInsertion.remove(item)
-                setInsertAnimation(holder.itemView, item)
+                setInsertAnimation(holder.itemView)
             }
 
             if (markedForDeletion.contains(item)) {
@@ -103,14 +126,9 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
         heightAnimation.start()
     }
 
-    private fun convertDpToPx(dp: Int): Int {
-        return Math.round(dp * context.resources.displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT)
-
-    }
-
-    private fun setInsertAnimation(viewToAnimate: View, item: CryptoCurrencyInfo) {
+    private fun setInsertAnimation(viewToAnimate: View) {
         viewToAnimate.alpha = 0f
-        val heightAnimation = ValueAnimator.ofInt(0, convertDpToPx(50))
+        val heightAnimation = ValueAnimator.ofInt(0, MiscFunctions.convertDpToPx(50, context))
 
         heightAnimation.addUpdateListener { valueAnimator ->
             val layoutParams = viewToAnimate.layoutParams

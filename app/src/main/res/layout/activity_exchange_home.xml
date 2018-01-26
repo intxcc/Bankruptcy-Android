@@ -2,21 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/exchangeHomeWrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#f8f8f8"
     tools:context="cc.intx.bankruptcy.ExchangeHome">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/exchangeSelectedCurrencyLayout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:gravity="center"
-        android:textSize="35sp"
         android:background="#181818"
-        android:fontFamily="serif"
-        android:text="Exchange"
-        android:textColor="#fff"/>
+        android:layout_height="80dp">
+        <cc.intx.bankruptcy.GraphSurfaceView
+            android:id="@+id/exchangeSelectedCurrencySurfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <TextView
+            android:id="@+id/exchangeHomeTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="center"
+            android:textSize="35sp"
+            android:fontFamily="serif"
+            android:text="Exchange"
+            android:textColor="#fff"/>
+    </FrameLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -58,6 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <Button
+                android:id="@+id/btnTest2"
                 android:text="btc"
                 android:backgroundTint="#fff"
                 android:layout_width="60dp"
@@ -77,6 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <Button
+                android:id="@+id/btnTest3"
                 android:text="ltc"
                 android:backgroundTint="#fff"
                 android:layout_width="60dp"
@@ -109,6 +124,5 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 </LinearLayout>

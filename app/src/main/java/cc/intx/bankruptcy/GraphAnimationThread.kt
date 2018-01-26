@@ -6,21 +6,17 @@ import android.view.SurfaceHolder
 /**
  * Created by xiix on 20.01.18.
  */
-class StartScreenAnimationThread : Thread {
+class GraphAnimationThread : Thread {
     private var surfaceHolder : SurfaceHolder
-    private var surfaceView : StartScreenSurfaceView
+    private var surfaceView : GraphSurfaceView
 
-    private var isRunning = false
+    var isRunning = false
 
-    constructor(surfaceHolder: SurfaceHolder, surfaceView: StartScreenSurfaceView) {
+    constructor(surfaceHolder: SurfaceHolder, surfaceView: GraphSurfaceView) {
         this.surfaceHolder = surfaceHolder
         this.surfaceView = surfaceView
 
         isRunning = false
-    }
-
-    fun setRunning(running: Boolean) {
-        this.isRunning = running
     }
 
     override fun run() {
