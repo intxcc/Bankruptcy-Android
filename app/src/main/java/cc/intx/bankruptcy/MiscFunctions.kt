@@ -34,7 +34,7 @@ class MiscFunctions {
             return 0f //we only get here if an invalid i is specified
         }
 
-        private fun splinePoint(i: Int, t: Float, inputPoints: ArrayList<PointF>): PointF {
+        private fun splinePoint(i: Int, t: Float, inputPoints: Array<PointF>): PointF {
             var xVal = 0f
             var yVal = 0f
 
@@ -50,16 +50,15 @@ class MiscFunctions {
             return p
         }
 
-        fun createCatmullRomSpline(inputPoints: ArrayList<PointF>, steps: Int): Array<PointF> {
-            if (inputPoints.isEmpty()) {
+        fun createCatmullRomSpline(iPoints: Array<PointF>, steps: Int): Array<PointF> {
+            if (iPoints.size <= 2) {
                 return Array<PointF>(0, {PointF()})
             }
 
             // So the ending is rendered correctly
-            inputPoints.add(inputPoints.last())
+            val inputPoints = iPoints.plusElement(iPoints.last())
 
             val outputPointCount = (inputPoints.size - 1) * steps + 1
-
             val outputPoints = Array<PointF>(outputPointCount, { PointF() })
             for (i in 0..steps) {
                 outputPoints[i] = inputPoints[0]

@@ -109,7 +109,6 @@ class StartScreenSurfaceView : SurfaceView, SurfaceHolder.Callback, SensorEventL
 
         val randInt = Random().nextInt(resArray.size)
         val res = resArray[randInt]
-        //bgColor = Color.argb(Random().nextInt(255), 255, 255, 255)
 
         val n = (bCanvas.height * (bCanvas.width + iconSize)) / (iconSize * iconSize)
         for (i in 0 until n) {

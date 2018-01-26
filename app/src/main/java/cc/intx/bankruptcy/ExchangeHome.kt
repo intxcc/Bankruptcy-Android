@@ -1,8 +1,5 @@
 package cc.intx.bankruptcy
 
-import android.animation.Animator
-import android.animation.ArgbEvaluator
-import android.animation.ValueAnimator
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,8 +12,11 @@ import android.widget.SearchView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_exchange_home.*
 import android.R.attr.visibility
+import android.animation.*
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.view.View.TRANSLATION_X
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import java.util.*
 
@@ -32,6 +32,8 @@ class ExchangeHome : AppCompatActivity() {
     private lateinit var selectedLayoutHeightAnimator: ValueAnimator
     private lateinit var selectedLayoutColorAnimator: ValueAnimator
     private lateinit var titleTextViewColorAnimator: ValueAnimator
+    private lateinit var titleTextViewBgColorAnimator: ValueAnimator
+    private lateinit var titleTextAnimatorSet: AnimatorSet
 
     private var isSearchFilterWaiting = false
     private var oldQuery = ""
@@ -50,6 +52,10 @@ class ExchangeHome : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exchange_home)
+
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
         exchangeHomeWrapper.setOnClickListener {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -138,28 +144,36 @@ class ExchangeHome : AppCompatActivity() {
             }
         })
 
-        /*/////////////////////////////////
-        // selectedLayoutColorAnimator //
-        selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#181818"), Color.parseColor("#dddddd"))
-
-        selectedLayoutColorAnimator.addUpdateListener { valueAnimator ->
-            exchangeSelectedCurrencyLayout.setBackgroundColor(valueAnimator.animatedValue as Int)
-        }*/
-
         ////////////////////////////////
         // titleTextViewColorAnimator //
-        titleTextViewColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#ffffffff"), Color.parseColor("#66ffffff"))
+        titleTextViewColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#222222"), Color.parseColor("#66ffffff"))
 
         titleTextViewColorAnimator.addUpdateListener { valueAnimator ->
             exchangeHomeTitleTextView.setTextColor(valueAnimator.animatedValue as Int)
         }
+
+        ////////////////////////////////
+        // titleTextViewBgColorAnimator //
+        titleTextViewBgColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#ffffffff"), Color.parseColor("#00000000"))
+        titleTextViewBgColorAnimator.duration = 200
+
+        titleTextViewBgColorAnimator.addUpdateListener { valueAnimator ->
+            exchangeHomeTitleTextView.setBackgroundColor(valueAnimator.animatedValue as Int)
+        }
+
+        ///////////////////////////
+        // titleTextAnimatorSet  //
+        titleTextAnimatorSet = AnimatorInflater.loadAnimator(this, R.animator.exchange_title) as AnimatorSet
+        titleTextAnimatorSet.setTarget(exchangeHomeTitleTextView)
     }
 
     fun selectCryptoCurrency(selection: CryptoCurrencyInfo?) {
         if (selectedCryptoCurrency == null && selection != null) {
             selectedLayoutHeightAnimator.start()
-            titleTextViewColorAnimator.start()
 
+            titleTextViewColorAnimator.start()
+            titleTextViewBgColorAnimator.start()
+            titleTextAnimatorSet.childAnimations[0].start()
 
             selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#181818"), selection.color)
 
@@ -171,8 +185,10 @@ class ExchangeHome : AppCompatActivity() {
             selectedLayoutColorAnimator.start()
         } else if (selectedCryptoCurrency != null && selection == null) {
             selectedLayoutHeightAnimator.reverse()
-            titleTextViewColorAnimator.reverse()
 
+            titleTextViewColorAnimator.reverse()
+            titleTextViewBgColorAnimator.reverse()
+            titleTextAnimatorSet.childAnimations[1].start()
 
             selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), selectedCryptoCurrency?.color, Color.parseColor("#181818"))
 
