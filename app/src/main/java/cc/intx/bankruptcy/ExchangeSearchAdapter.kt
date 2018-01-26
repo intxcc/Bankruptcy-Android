@@ -50,6 +50,7 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
         val item = mDatasetFiltered.get(position)
 
         holder?.mFrameLayout?.findViewById<TextView>(R.id.info_text)?.text = item.long_name
+        holder?.mFrameLayout?.findViewById<TextView>(R.id.short_text)?.text = item.short_name
 
         val icon = item.icon
         if (icon != null) holder?.mFrameLayout?.findViewById<ImageView>(R.id.bg_image)?.setBackgroundResource(icon)
@@ -62,6 +63,8 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
 
         if (holder?.itemView != null) {
             holder.itemView.setOnClickListener {
+                SharedState.graphAnimationThread?.setFramerate(30, 500)
+
                 if (selection == item) {
                     selectCryptoCurrency(null)
                     selection = null
@@ -175,7 +178,11 @@ class ExchangeSearchAdapter : RecyclerView.Adapter<ExchangeSearchAdapter.ViewHol
                 }
             }
         } else {
-            mDatasetFiltered.clear()
+            //mDatasetFiltered.clear()
+            for (item in mDatasetFiltered) {
+                markedForDeletion.add(item)
+                markedForInsertion.remove(item)
+            }
         }
 
         val sortedList = mDatasetFiltered.sortedWith(compareBy({it.long_name}))

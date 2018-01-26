@@ -5,18 +5,11 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.SearchView
-import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_exchange_home.*
-import android.R.attr.visibility
 import android.animation.*
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
-import android.view.View.TRANSLATION_X
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import java.util.*
 
@@ -29,33 +22,20 @@ class ExchangeHome : AppCompatActivity() {
     private var cryptoCurrencyList = ArrayList<CryptoCurrencyInfo>()
     private var selectedCryptoCurrency: CryptoCurrencyInfo? = null
 
+    private lateinit var titleBackgroundAnimator: ValueAnimator
     private lateinit var selectedLayoutHeightAnimator: ValueAnimator
     private lateinit var selectedLayoutColorAnimator: ValueAnimator
-    private lateinit var titleTextViewColorAnimator: ValueAnimator
-    private lateinit var titleTextViewBgColorAnimator: ValueAnimator
-    private lateinit var titleTextAnimatorSet: AnimatorSet
+    private var selectedLayoutUpdateListener = ValueAnimator.AnimatorUpdateListener { valueAnimator ->
+        exchangeSelectedCurrencyLayout.setBackgroundColor(valueAnimator.animatedValue as Int)
+        exchangeSelectedCurrencySurfaceView.bgColor = valueAnimator.animatedValue as Int
+    }
 
     private var isSearchFilterWaiting = false
     private var oldQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        window.decorView.setOnSystemUiVisibilityChangeListener{ visibility ->
-            if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
-                window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-            }
-        }
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exchange_home)
-
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
         exchangeHomeWrapper.setOnClickListener {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -79,7 +59,6 @@ class ExchangeHome : AppCompatActivity() {
         exSearchResultsRecyclerView.adapter = mAdapter
 
         initializeAnimators()
-        exchangeSelectedCurrencySurfaceView.bgColor = Color.parseColor("#181818")
 
         btnTest.setOnClickListener {
             exchangeSelectedCurrencySurfaceView.doDraw()
@@ -100,18 +79,13 @@ class ExchangeHome : AppCompatActivity() {
                 if (!isSearchFilterWaiting) {
                     isSearchFilterWaiting = true
 
-                    var waitTime: Long = 500
-                    if (oldQuery == "") {
-                        waitTime = 100
-                    }
-
                     Handler().postDelayed({
                         if (newText != null) {
                             oldQuery = newText
                             mAdapter.filter(exchangeSearchField.query.toString())
                         }
                         isSearchFilterWaiting = false
-                    }, waitTime)
+                    }, 500)
                 }
                 return true
             }
@@ -120,6 +94,14 @@ class ExchangeHome : AppCompatActivity() {
                 return false
             }
         })
+    }
+
+    override fun onWindowFocusChanged(hasFocus:Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        if (hasFocus) {
+            MiscFunctions.hideSystemUi(window)
+        }
     }
 
     private fun initializeAnimators() {
@@ -133,6 +115,17 @@ class ExchangeHome : AppCompatActivity() {
             exchangeSelectedCurrencyLayout.layoutParams = layoutParams
         }
 
+        ////////////////////////////////
+        // titleTextViewBgColorAnimator //
+        titleBackgroundAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#ffffffff"), Color.parseColor("#00000000"))
+        titleBackgroundAnimator.duration = 200
+
+        titleBackgroundAnimator.addUpdateListener { valueAnimator ->
+            exchangeHomeTitleBg.setBackgroundColor(valueAnimator.animatedValue as Int)
+        }
+
+        //////////////////////////////////
+        // selectedLayoutHeightAnimator //
         selectedLayoutHeightAnimator.addListener(object: Animator.AnimatorListener{
             override fun onAnimationStart(animation: Animator?) {
             }
@@ -143,73 +136,39 @@ class ExchangeHome : AppCompatActivity() {
             override fun onAnimationCancel(animation: Animator?) {
             }
         })
-
-        ////////////////////////////////
-        // titleTextViewColorAnimator //
-        titleTextViewColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#222222"), Color.parseColor("#66ffffff"))
-
-        titleTextViewColorAnimator.addUpdateListener { valueAnimator ->
-            exchangeHomeTitleTextView.setTextColor(valueAnimator.animatedValue as Int)
-        }
-
-        ////////////////////////////////
-        // titleTextViewBgColorAnimator //
-        titleTextViewBgColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#ffffffff"), Color.parseColor("#00000000"))
-        titleTextViewBgColorAnimator.duration = 200
-
-        titleTextViewBgColorAnimator.addUpdateListener { valueAnimator ->
-            exchangeHomeTitleTextView.setBackgroundColor(valueAnimator.animatedValue as Int)
-        }
-
-        ///////////////////////////
-        // titleTextAnimatorSet  //
-        titleTextAnimatorSet = AnimatorInflater.loadAnimator(this, R.animator.exchange_title) as AnimatorSet
-        titleTextAnimatorSet.setTarget(exchangeHomeTitleTextView)
     }
 
-    fun selectCryptoCurrency(selection: CryptoCurrencyInfo?) {
+    fun animateSelection(selection: CryptoCurrencyInfo?) {
         if (selectedCryptoCurrency == null && selection != null) {
+            val right = exchangeHomeTitleTextView.measuredWidth - exchangeHomeTitleTextView.right.toFloat() - 15
+            val top = exchangeHomeTitleTextView.measuredHeight - exchangeHomeTitleTextView.top.toFloat() - 50
+            exchangeHomeTitleTextView.animate().translationX(-right).translationY(-top).scaleX(0.8f).scaleY(0.8f).start()
+
+            titleBackgroundAnimator.start()
             selectedLayoutHeightAnimator.start()
 
-            titleTextViewColorAnimator.start()
-            titleTextViewBgColorAnimator.start()
-            titleTextAnimatorSet.childAnimations[0].start()
-
-            selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#181818"), selection.color)
-
-            selectedLayoutColorAnimator.addUpdateListener { valueAnimator ->
-                exchangeSelectedCurrencyLayout.setBackgroundColor(valueAnimator.animatedValue as Int)
-                exchangeSelectedCurrencySurfaceView.bgColor = valueAnimator.animatedValue as Int
-            }
-
+            selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), Color.parseColor("#ffffff"), selection.color)
+            selectedLayoutColorAnimator.addUpdateListener(selectedLayoutUpdateListener)
             selectedLayoutColorAnimator.start()
         } else if (selectedCryptoCurrency != null && selection == null) {
+            exchangeHomeTitleTextView.animate().translationX(0f).translationY(0f).scaleX(1f).scaleY(1f).start()
+
+            titleBackgroundAnimator.reverse()
             selectedLayoutHeightAnimator.reverse()
 
-            titleTextViewColorAnimator.reverse()
-            titleTextViewBgColorAnimator.reverse()
-            titleTextAnimatorSet.childAnimations[1].start()
-
-            selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), selectedCryptoCurrency?.color, Color.parseColor("#181818"))
-
-            selectedLayoutColorAnimator.addUpdateListener { valueAnimator ->
-                exchangeSelectedCurrencyLayout.setBackgroundColor(valueAnimator.animatedValue as Int)
-                exchangeSelectedCurrencySurfaceView.bgColor = valueAnimator.animatedValue as Int
-            }
-
+            selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), selectedCryptoCurrency?.color, Color.parseColor("#ffffff"))
+            selectedLayoutColorAnimator.addUpdateListener(selectedLayoutUpdateListener)
             selectedLayoutColorAnimator.start()
         } else if (selectedCryptoCurrency != null && selection != null) {
             selectedLayoutColorAnimator = ValueAnimator.ofObject(ArgbEvaluator(), selectedCryptoCurrency?.color, selection.color)
-
-            selectedLayoutColorAnimator.addUpdateListener { valueAnimator ->
-                exchangeSelectedCurrencyLayout.setBackgroundColor(valueAnimator.animatedValue as Int)
-                exchangeSelectedCurrencySurfaceView.bgColor = valueAnimator.animatedValue as Int
-            }
-
+            selectedLayoutColorAnimator.addUpdateListener(selectedLayoutUpdateListener)
             selectedLayoutColorAnimator.start()
-
         }
 
         selectedCryptoCurrency = selection
+    }
+
+    fun selectCryptoCurrency(selection: CryptoCurrencyInfo?) {
+        animateSelection(selection)
     }
 }

@@ -12,26 +12,40 @@
     <FrameLayout
         android:id="@+id/exchangeSelectedCurrencyLayout"
         android:orientation="vertical"
-        android:elevation="1.5dp"
         android:layout_width="match_parent"
-        android:background="#181818"
-        android:layout_height="80dp">
+        android:layout_height="81dp">
 
         <cc.intx.bankruptcy.GraphSurfaceView
             android:id="@+id/exchangeSelectedCurrencySurfaceView"
             android:layout_width="match_parent"
             android:layout_height="300dp" />
 
-        <TextView
-            android:id="@+id/exchangeHomeTitleTextView"
+        <FrameLayout
+            android:id="@+id/exchangeHomeTitleBg"
             android:layout_width="match_parent"
-            android:layout_height="81dp"
-            android:gravity="center"
-            android:textSize="33sp"
-            android:background="#fff"
-            android:fontFamily="sans-serif-smallcaps"
-            android:text="Exchange"
-            android:textColor="#222"/>
+            android:layout_height="80dp"
+            android:background="#ffffff"
+            android:elevation="1.5dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/exchangeHomeTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:textSize="40sp"
+                android:shadowColor="#33000000"
+                android:shadowRadius="1.8"
+                android:shadowDx="1.5"
+                android:shadowDy="1.0"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Exchange"
+                android:textColor="#333"/>
+
+        </FrameLayout>
     </FrameLayout>
 
     <TextView

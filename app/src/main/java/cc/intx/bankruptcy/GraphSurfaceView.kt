@@ -124,6 +124,8 @@ class GraphSurfaceView : SurfaceView, SurfaceHolder.Callback {
         Log.d("GRAPH", "Starting animation thread.")
 
         animationThread = GraphAnimationThread(holder, this)
+        SharedState.graphAnimationThread = animationThread
+
         animationThread.isRunning = true
         animationThread.start()
     }
@@ -133,6 +135,8 @@ class GraphSurfaceView : SurfaceView, SurfaceHolder.Callback {
 
         animationThread.isRunning = false
         animationThread.interrupt()
+
+        SharedState.graphAnimationThread = null
     }
 
     //TESTFUN TODO DEBUG

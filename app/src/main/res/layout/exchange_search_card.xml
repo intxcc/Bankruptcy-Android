@@ -23,15 +23,32 @@
         android:layout_width="1dp"
         android:layout_height="40dp"
         android:layout_gravity="center_vertical"
-        android:background="#ccc"/>
+        android:background="#999"/>
     <TextView android:id="@+id/info_text"
+        android:text="Testwährung"
         android:layout_gravity="center_vertical|bottom"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="3dp"
         android:textSize="20sp"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:textColor="#ccc"
+        android:textColor="#999"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         xmlns:android="http://schemas.android.com/apk/res/android" />
+
+    <TextView
+        android:id="@+id/short_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|top"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif-condensed"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
+        android:text="Tsw"
+        android:textColor="#ccc"
+        android:textSize="14sp" />
 </FrameLayout>
