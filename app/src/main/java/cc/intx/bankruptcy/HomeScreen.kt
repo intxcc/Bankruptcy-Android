@@ -23,7 +23,7 @@ class HomeScreen : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
 
         if (hasFocus) {
-            MiscFunctions.hideSystemUi(window)
+            MiscFunctions.adjustSystemUi(window)
         }
     }
 }

@@ -16,7 +16,7 @@ class StartScreen : Activity() {
         setContentView(R.layout.activity_start_screen)
 
         testButton.setOnClickListener {
-            startScreenSurfaceView.stopThread()
+            //startScreenSurfaceView.stopThread()
             val intent = Intent(this, HomeScreen::class.java)
             startActivity(intent)
         }
@@ -26,7 +26,7 @@ class StartScreen : Activity() {
         super.onWindowFocusChanged(hasFocus)
 
         if (hasFocus) {
-            MiscFunctions.hideSystemUi(window)
+            MiscFunctions.adjustSystemUi(window, true)
         }
     }
 }

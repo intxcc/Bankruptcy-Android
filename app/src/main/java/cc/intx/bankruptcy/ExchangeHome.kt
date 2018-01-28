@@ -19,7 +19,6 @@ class ExchangeHome : AppCompatActivity() {
     lateinit var mAdapter: ExchangeSearchAdapter
     lateinit var mLayoutManager: RecyclerView.LayoutManager
 
-    private var cryptoCurrencyList = ArrayList<CryptoCurrencyInfo>()
     private var selectedCryptoCurrency: CryptoCurrencyInfo? = null
 
     private lateinit var titleBackgroundAnimator: ValueAnimator
@@ -42,20 +41,10 @@ class ExchangeHome : AppCompatActivity() {
             imm.hideSoftInputFromWindow(exchangeHomeWrapper.windowToken, 0)
         }
 
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Bitcoin", "BTC", Color.parseColor("#FF9900"), R.drawable.ic_bitcoin))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Litecoin", "LTC", Color.parseColor("#cbc6c6"), R.drawable.ic_litecoin))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Ethereum", "ETH", Color.parseColor("#627eea"), R.drawable.ic_ether))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Ethereum Classic", "ETC", Color.parseColor("#669073"), R.drawable.ic_eth_classic))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Monero", "XMR", Color.parseColor("#ff6600"), R.drawable.ic_monero))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Peercoin", "PPC", Color.parseColor("#3cb054"), R.drawable.ic_peercoin))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Ripple", "XRP", Color.parseColor("#00aae4"), R.drawable.ic_ripple))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Dash", "DASH", Color.parseColor("#1c75bc"), R.drawable.ic_dash))
-        cryptoCurrencyList.add(CryptoCurrencyInfo("Zcash", "ZEC", Color.parseColor("#ecb244"), R.drawable.ic_zcash))
-
         mLayoutManager = LinearLayoutManager(this);
         exSearchResultsRecyclerView.layoutManager = mLayoutManager
 
-        mAdapter = ExchangeSearchAdapter(cryptoCurrencyList, ::selectCryptoCurrency, this)
+        mAdapter = ExchangeSearchAdapter(SharedState.getCryptocurrencyList(), ::selectCryptoCurrency, this)
         exSearchResultsRecyclerView.adapter = mAdapter
 
         initializeAnimators()
@@ -66,7 +55,7 @@ class ExchangeHome : AppCompatActivity() {
 
         btnTest2.setOnClickListener {
             // TEST TODO DELETE DEBUG
-            selectCryptoCurrency(cryptoCurrencyList.get(Random().nextInt(5)))
+            selectCryptoCurrency(SharedState.getCryptocurrencyList().get(Random().nextInt(5)))
         }
 
         btnTest3.setOnClickListener {
@@ -100,7 +89,7 @@ class ExchangeHome : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
 
         if (hasFocus) {
-            MiscFunctions.hideSystemUi(window)
+            MiscFunctions.adjustSystemUi(window)
         }
     }
 
