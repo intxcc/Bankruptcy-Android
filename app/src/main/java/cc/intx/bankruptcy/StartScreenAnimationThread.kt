@@ -42,6 +42,8 @@ class StartScreenAnimationThread(private var surfaceHolder: SurfaceHolder, priva
                 try {
                     if (FPS < 10) {
                         sleep(20)
+                    } else if (FPS < 60) {
+                        sleep(4)
                     }
                 } catch (e: InterruptedException) {
                     Log.d("THREADB", "Interrupted sleep exception")
